@@ -7,19 +7,20 @@
   <style>
     /* Global Styles */
     html, body {
-      user-select: none;
       margin: 0;
       height: 100%;
       overflow: hidden;
       font-family: "Times New Roman", serif;
       position: relative;
     }
-    * {
-      user-select: none;
-    }
     /* =========================
          Envelope Animation Styles
        ========================= */
+    .envelope-closed,
+    .envelope-open {
+      -webkit-tap-highlight-color: transparent; /* Removes blue highlight on tap */
+      outline: none;
+    }
     .envelope-closed {
       position: absolute;
       left: 50%;
