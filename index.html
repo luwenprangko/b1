@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Envelope to Main Transition</title>
+  <style>
+    /* Global Styles */
+    html, body {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: "Times New Roman", serif;
+      position: relative;
+    }
+    /* =========================
+         Envelope Animation Styles
+       ========================= */
+    .envelope-closed {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+    }
+    .envelope-open {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, 150%) scale(2.5);
+      opacity: 0;
+      cursor: pointer;
+    }
+    @keyframes closeOut {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+      20% {
+        transform: translate(-50%, -50%) scale(2.5);
+        opacity: 1;
+      }
+      50% {
+        transform: translate(-50%, -50%) scale(2.5);
+        opacity: 1;
+      }
+      80% {
+        transform: translate(-50%, -50%) scale(2.5);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-50%, 150%) scale(2.5);
+        opacity: 0;
+      }
+    }
+    @keyframes openIn {
+      0% {
+        transform: translate(-50%, -55%) scale(0.5);
+        opacity: 0;
+      }
+      50% {
+        transform: translate(-50%, -270%) scale(2.5);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(2.5);
+        opacity: 1;
+      }
+    }
+    .envelope-closed.animate {
+      animation: closeOut 3s forwards;
+    }
+    .envelope-open.animate {
+      animation: openIn 3s forwards;
+      animation-delay: 1.5s;
+    }
+
+    /* =========================
+         Main Container Styles
+       ========================= */
+    /* Hidden initially */
+    main#mainContainer {
+      display: none;
+      height: 100%;
+      justify-content: center;
+      align-items: center;
+      /* Start with scale 0 before animation */
+      transform: scale(0);
+      opacity: 0;
+    }
+    .container {
+      width: 100%;
+      height: calc(100vh - 40px);
+      max-width: 400px;
+      border: 1px solid #ccc;
+      margin: 20px;
+      padding: 20px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+    }
+    #content {
+      flex: 1;
+      overflow-x: hidden;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      text-align: justify;
+      background: #fff;
+      box-sizing: border-box;
+      /* Hide scrollbar for IE, Edge and Firefox */
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    #content::-webkit-scrollbar {
+      display: none;
+    }
+    /* Main container scale animation */
+    @keyframes scaleUp {
+      0% {
+        transform: scale(0);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+    .scale-up {
+      animation: scaleUp 1s forwards;
+    }
+  </style>
+</head>
+<body>
+  <!-- Envelope Elements (displayed first) -->
+  <div id="closed" class="envelope-closed">
+    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+      <path fill="#f1f2f2" d="M0 7.688h64v48H0z"/>
+      <path fill="#bcbec0" d="M0 55.688L32.06 20.94L64 55.688z"/>
+      <path fill="#e7e6e6" d="M.127 55.688L32.06 23.68L64 55.688z"/>
+      <path fill="#bcbec0" d="M64 7.688L31.938 44.25L0 7.688z"/>
+      <path fill="#e7e6e6" d="M63.873 7.688L31.938 39.696L0 7.688z"/>
+      <path fill="#c13a51" d="M33.02 42.718c.051.023.1.061.152.08c1.678.633 3.615 1.066 5.098-.27c1.072-.965 1.494-2.283 1.369-3.639c2.076-1 4.088-2.877 2.9-5.396c-.484-1.029-1.266-1.654-2.176-2.037c.113-.34.207-.68.215-1.051c.043-1.854-1.049-3.199-2.664-3.369c-.764-.951-1.709-1.748-2.834-2.289c-1.525-.736-3.518-.211-4.697 1.012c-.037-.082-.051-.168-.094-.248c-1.461-2.691-5.488-2.408-6.092.777c-.256 1.354.178 2.686.902 3.826c-.139.539-.201 1.105-.256 1.591c.18-1.599-2.148.807-2.633 1.414c-1.699 2.128-1.203 5.534 1.414 6.679c.395.156.805.25 1.229.273c.242.029.43.049.578.059c.184.877.482 1.662 1.184 2.404c1.623 1.721 4.521 2.592 6.254.455c.067-.08.091-.185.151-.271"/>
+      <circle cx="32.14" cy="33.965" r="8.07" fill="#ce3a4c"/>
+      <circle cx="32.14" cy="33.965" r="6.917" fill="#dd4e66"/>
+    </svg>
+  </div>
+  <div id="open" class="envelope-open">
+    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+      <path fill="#e7e6e6" d="M.5 11.5h63v47H.5z"/>
+      <path fill="#be1e2d" d="M53.829 17.382c1.312 0 2.376.991 2.376 2.212v9.268c0 1.222-1.063 2.214-2.376 2.214H45.98c-1.317 0-2.38-.992-2.38-2.214v-9.268c0-1.221 1.062-2.212 2.38-2.212z"/>
+      <path fill="#f15a29" d="M49.551 19.475c.645 0 1.164.486 1.164 1.081v4.527c0 .597-.52 1.083-1.164 1.083h-3.83c-.644 0-1.163-.486-1.163-1.083v-4.527c0-.595.52-1.081 1.163-1.081z"/>
+      <path fill="#243438" d="M41.58 36.25c0 .579-.47 1.047-1.046 1.047H16.186a1.047 1.047 0 1 1 0-2.095h24.348c.576 0 1.046.47 1.046 1.048m-3.35 5.42c0 .578-.409 1.047-.914 1.047H16.044c-.503 0-.912-.469-.912-1.047c0-.58.409-1.046.912-1.046h21.272c.505 0 .914.466.914 1.046m7.535 5.52c0 .577-.541 1.046-1.212 1.046h-28.2c-.67 0-1.213-.469-1.213-1.046c0-.581.543-1.049 1.213-1.049h28.2c.671.001 1.212.468 1.212 1.049"/>
+      <path fill="#bcbdbf" d="M23.21 27.71c-1.714 1.812-4.808 8.489-2.712 10.474c2.101 1.984 8.598-1.472 10.312-3.285c1.709-1.807.14-3.229-1.958-5.212c-2.102-1.99-3.931-3.785-5.642-1.977m1.619 2.344c.798-.839 1.655-.003 2.635.924c.977.924 1.706 1.592.912 2.433c-.798.844-3.831 2.46-4.81 1.531c-.977-.922.467-4.04 1.263-4.888"/>
+      <path fill="#a7a8ac" d="M30.668 31.523c.957 1.143 1.282 2.174.146 3.375c-1.714 1.813-8.212 5.27-10.312 3.285c-.316-.302-.502-.718-.604-1.202c4.213-.8 9.358-2.047 10.77-5.458"/>
+      <path fill="#59595c" d="m25.77 27.332l5.28 4.998l22.598-21.444l-7.721-7.302z"/>
+      <g fill="#424143">
+        <path d="m29.424 30.789l1.626 1.541l22.598-21.444l-2.843-2.688zm-2.032-1.919l-1.622-1.538L45.93 3.584l2.848 2.693z"/>
+        <path d="M46.11 2.41c-1.046 1.106-.968 2.889.183 3.976l4.533 4.29c1.147 1.086 2.934 1.069 3.983-.039c1.047-1.105.966-2.889-.185-3.974L50.09 2.372c-1.149-1.087-2.929-1.072-3.98.038"/>
+        <path d="M49.41 7.645c1.25 1.178 2.906 1.456 3.702.616l3.145-3.323c.796-.842.429-2.481-.817-3.665C54.193.091 52.531-.185 51.734.659L48.59 3.982c-.794.838-.431 2.478.82 3.663"/>
+      </g>
+      <path fill="#bcbdbf" d="M37.37 11.125a1.33 1.33 0 0 0 .055 1.879l7.412 7.01a1.325 1.325 0 0 0 1.878-.05a1.33 1.33 0 0 0-.052-1.879l-7.413-7.01a1.325 1.325 0 0 0-1.88.049"/>
+    </svg>
+  </div>
+
+  <!-- Main Scroll-to-Type Container (hidden initially) -->
+  <main id="mainContainer">
+    <div class="container">
+      <div id="content"></div>
+    </div>
+  </main>
+
+  <script>
+    /* Flag to enable scroll events only after the envelope is fully handled */
+    let mainActive = false;
+
+    /* ----- Envelope Animation Handling ----- */
+    const closedEnvelope = document.getElementById("closed");
+    const openEnvelope = document.getElementById("open");
+    const mainContainer = document.getElementById("mainContainer");
+
+    // Clicking the closed envelope starts the animations.
+    closedEnvelope.addEventListener("click", function() {
+      closedEnvelope.classList.add("animate");
+      openEnvelope.classList.add("animate");
+    });
+
+    // When the open envelope's animation finishes, wait for a click.
+    openEnvelope.addEventListener("animationend", function(e) {
+      if (e.animationName === "openIn") {
+        // Now the open envelope waits for a click.
+        openEnvelope.style.cursor = "pointer";
+        openEnvelope.addEventListener("click", transitionToMain);
+      }
+    });
+
+    // Transition to the main container, animate its scale, and enable scrolling.
+    function transitionToMain() {
+      closedEnvelope.style.display = "none";
+      openEnvelope.style.display = "none";
+      mainContainer.style.display = "flex";
+      mainContainer.classList.add("scale-up"); // animate scale from 0 to 1
+      mainActive = true; // Now scrolling is enabled.
+      // Remove the click listener.
+      openEnvelope.removeEventListener("click", transitionToMain);
+    }
+
+    /* ----- Scroll-to-Type Functionality ----- */
+    const fullText =
+`Beloved one,
+
+Thank you sa lahat ng mga bagay na nagawa mo para pasayahin ako, hindi ko man mavocal kung gaano ako nagpapasalamat, gagawa at gagawa ako ng paraan upang maparamdam ko sayong lahat ng bagay na naiibigay mo ay lubos akong nagpapasalamat, mula sa pagbake ng mga favorite pastries ko, sa pagluluto ng baon ko. Hindi ko man matumbasan lahat ng mga nagagawa mo, hindi pwedeng hindi ako gagawa ng paraan para makabawi sa lahat ng mga nagagawa mo. Sa simpleng sulat na to sana maiparating ko sayo ang lubos kong pagpapasalamat at lubos na pagmamahal.
+
+Naging mahirap man ang pinagdaanan natin nitong mga nakalipas na araw, madalas man tayong nagkakasigawa, at hindi nagkakaunawaan, palagi pa ding ikaw ang laman ng pagmamahal ko, ikaw pa din ang hinahanap hanap ko sa gitna ng mga problema natin. Nangako ako sayo na sa kahit na anong bagay, ikaw pa din ang gugustuhin kong makasama sa habang buhay. Masaya ako sayo e, walang dahilan at walang hahadlang na mahalin at piliin ka kahit sa pinaka mahirap na sitwasyon nating dalawa. Hindi man kita nauunawaan paminsan minsan, handa pa rin akong intindihin ka kasi ikaw lang din naman ang nagiging kakampi ko kapag magisa ako, ikaw lang din naman ang nakakakilala sa kung sino ako. Kaya nagnangako akong babaguhin ko ang bagay na hindi dapat ako ganon sayo.
+
+Sana, ako pa din ang piliin mong pakasalan, sana ako pa din ang piliin mong makasama sa habang buhay. 50 years from now, para pading 1 week old ang pagmamahal kong ibibigay sayo.
+
+Mahal na mahal kita palagi, Lakambini
+
+Eternally yours, Owen`;
+
+    const contentDiv = document.getElementById("content");
+    let accumulatedLetters = 0;
+    let lettersRevealed = 0;
+    let lastTouchY = null;
+
+    function updateText() {
+      if (accumulatedLetters < 0) accumulatedLetters = 0;
+      if (accumulatedLetters > fullText.length) accumulatedLetters = fullText.length;
+      const newLetterCount = Math.floor(accumulatedLetters);
+      if (newLetterCount !== lettersRevealed) {
+        lettersRevealed = newLetterCount;
+        contentDiv.textContent = fullText.substring(0, lettersRevealed);
+        contentDiv.scrollTop = contentDiv.scrollHeight;
+      }
+    }
+
+    function handleDelta(deltaY) {
+      const computedStyle = window.getComputedStyle(contentDiv);
+      const fontSize = parseFloat(computedStyle.fontSize);
+      const lineHeight = fontSize * 1.2;
+      const sensitivity = 4;
+      const letterIncrement = (deltaY / lineHeight) * sensitivity;
+      accumulatedLetters += letterIncrement;
+      updateText();
+    }
+
+    // Desktop: Listen to the wheel event.
+    window.addEventListener("wheel", (e) => {
+      if (!mainActive) {
+        e.preventDefault();
+        return;
+      }
+      e.preventDefault();
+      let deltaY = 0;
+      if (e.deltaMode === WheelEvent.DOM_DELTA_PIXEL) {
+        deltaY = e.deltaY;
+      } else if (e.deltaMode === WheelEvent.DOM_DELTA_LINE) {
+        const computedStyle = window.getComputedStyle(contentDiv);
+        const fontSize = parseFloat(computedStyle.fontSize);
+        deltaY = e.deltaY * (fontSize * 1.2);
+      } else if (e.deltaMode === WheelEvent.DOM_DELTA_PAGE) {
+        deltaY = e.deltaY * contentDiv.offsetHeight;
+      }
+      handleDelta(deltaY);
+    }, { passive: false });
+
+    // Mobile: Listen to touch events.
+    window.addEventListener("touchstart", (e) => {
+      if (!mainActive) {
+        e.preventDefault();
+        return;
+      }
+      if (e.touches.length === 1) {
+        lastTouchY = e.touches[0].clientY;
+      }
+    }, { passive: false });
+
+    window.addEventListener("touchmove", (e) => {
+      if (!mainActive) {
+        e.preventDefault();
+        return;
+      }
+      if (e.touches.length === 1 && lastTouchY !== null) {
+        const currentY = e.touches[0].clientY;
+        const deltaY = lastTouchY - currentY;
+        lastTouchY = currentY;
+        e.preventDefault();
+        handleDelta(deltaY);
+      }
+    }, { passive: false });
+
+    window.addEventListener("touchend", () => {
+      if (!mainActive) {
+        return;
+      }
+      lastTouchY = null;
+    }, { passive: false });
+  </script>
+</body>
+</html>
