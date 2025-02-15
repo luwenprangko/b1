@@ -22,6 +22,7 @@
       top: 50%;
       transform: translate(-50%, -50%);
       cursor: pointer;
+      z-index: 2; /* ensure it's on top initially */
     }
     .envelope-open {
       position: absolute;
@@ -29,9 +30,9 @@
       top: 50%;
       transform: translate(-50%, 150%) scale(2.5);
       opacity: 0;
-      cursor: pointer;
-      /* Ensure touch actions are recognized */
-      touch-action: manipulation;
+      z-index: 1;
+      /* Disable pointer events until needed */
+      pointer-events: none;
     }
     @keyframes closeOut {
       0% {
@@ -80,7 +81,6 @@
     /* =========================
          Main Container Styles
        ========================= */
-    /* Hidden initially */
     main#mainContainer {
       display: none;
       height: 100%;
@@ -116,7 +116,6 @@
     #content::-webkit-scrollbar {
       display: none;
     }
-    /* Main container scale animation */
     @keyframes scaleUp {
       0% {
         transform: scale(0);
@@ -133,8 +132,9 @@
   </style>
 </head>
 <body>
-  <!-- Envelope Elements (displayed first) -->
+  <!-- Envelope Elements -->
   <div id="closed" class="envelope-closed">
+    <!-- Closed Envelope SVG -->
     <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
       <path fill="#f1f2f2" d="M0 7.688h64v48H0z"/>
       <path fill="#bcbec0" d="M0 55.688L32.06 20.94L64 55.688z"/>
@@ -147,6 +147,7 @@
     </svg>
   </div>
   <div id="open" class="envelope-open">
+    <!-- Open Envelope SVG -->
     <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
       <path fill="#e7e6e6" d="M.5 11.5h63v47H.5z"/>
       <path fill="#be1e2d" d="M53.829 17.382c1.312 0 2.376.991 2.376 2.212v9.268c0 1.222-1.063 2.214-2.376 2.214H45.98c-1.317 0-2.38-.992-2.38-2.214v-9.268c0-1.221 1.062-2.212 2.38-2.212z"/>
@@ -172,7 +173,7 @@
   </main>
 
   <script>
-    /* Flag to enable scroll events only after the envelope is fully handled */
+    /* Flag to enable scroll events only after envelope transition */
     let mainActive = false;
 
     /* ----- Envelope Animation Handling ----- */
@@ -181,16 +182,16 @@
     const mainContainer = document.getElementById("mainContainer");
 
     // Clicking the closed envelope starts the animations.
-    closedEnvelope.addEventListener("click", function() {
+    closedEnvelope.addEventListener("click", () => {
       closedEnvelope.classList.add("animate");
       openEnvelope.classList.add("animate");
     });
 
-    // When the open envelope's animation finishes, wait for a pointerup event.
-    openEnvelope.addEventListener("animationend", function(e) {
+    // When the open envelope's animation finishes, enable its pointer events and wait for a pointerup.
+    openEnvelope.addEventListener("animationend", (e) => {
       if (e.animationName === "openIn") {
+        openEnvelope.style.pointerEvents = "auto";
         openEnvelope.style.cursor = "pointer";
-        // Use pointerup for cross-device support.
         openEnvelope.addEventListener("pointerup", transitionToMain);
       }
     });
@@ -200,8 +201,8 @@
       closedEnvelope.style.display = "none";
       openEnvelope.style.display = "none";
       mainContainer.style.display = "flex";
-      mainContainer.classList.add("scale-up"); // Animate scale from 0 to 1.
-      mainActive = true; // Enable scrolling.
+      mainContainer.classList.add("scale-up");
+      mainActive = true;
       // Remove the pointerup listener to prevent multiple triggers.
       openEnvelope.removeEventListener("pointerup", transitionToMain);
     }
@@ -246,7 +247,6 @@ Eternally yours, Owen`;
       updateText();
     }
 
-    // Desktop: Listen to the wheel event.
     window.addEventListener("wheel", (e) => {
       if (!mainActive) {
         e.preventDefault();
@@ -266,7 +266,6 @@ Eternally yours, Owen`;
       handleDelta(deltaY);
     }, { passive: false });
 
-    // Mobile: Listen to touch events.
     window.addEventListener("touchstart", (e) => {
       if (!mainActive) {
         e.preventDefault();
