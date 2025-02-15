@@ -30,6 +30,8 @@
       transform: translate(-50%, 150%) scale(2.5);
       opacity: 0;
       cursor: pointer;
+      /* Ensure touch actions are recognized */
+      touch-action: manipulation;
     }
     @keyframes closeOut {
       0% {
@@ -84,7 +86,6 @@
       height: 100%;
       justify-content: center;
       align-items: center;
-      /* Start with scale 0 before animation */
       transform: scale(0);
       opacity: 0;
     }
@@ -108,11 +109,10 @@
       text-align: justify;
       background: #fff;
       box-sizing: border-box;
-      /* Hide scrollbar for IE, Edge and Firefox */
-      -ms-overflow-style: none;  /* IE and Edge */
-      scrollbar-width: none;  /* Firefox */
+      /* Hide scrollbar for IE, Edge, Firefox and WebKit browsers */
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
-    /* Hide scrollbar for Chrome, Safari and Opera */
     #content::-webkit-scrollbar {
       display: none;
     }
@@ -186,12 +186,12 @@
       openEnvelope.classList.add("animate");
     });
 
-    // When the open envelope's animation finishes, wait for a click or tap.
+    // When the open envelope's animation finishes, wait for a pointerup event.
     openEnvelope.addEventListener("animationend", function(e) {
       if (e.animationName === "openIn") {
         openEnvelope.style.cursor = "pointer";
-        openEnvelope.addEventListener("click", transitionToMain);
-        openEnvelope.addEventListener("touchend", transitionToMain);
+        // Use pointerup for cross-device support.
+        openEnvelope.addEventListener("pointerup", transitionToMain);
       }
     });
 
@@ -202,9 +202,8 @@
       mainContainer.style.display = "flex";
       mainContainer.classList.add("scale-up"); // Animate scale from 0 to 1.
       mainActive = true; // Enable scrolling.
-      // Remove the event listeners to prevent multiple triggers.
-      openEnvelope.removeEventListener("click", transitionToMain);
-      openEnvelope.removeEventListener("touchend", transitionToMain);
+      // Remove the pointerup listener to prevent multiple triggers.
+      openEnvelope.removeEventListener("pointerup", transitionToMain);
     }
 
     /* ----- Scroll-to-Type Functionality ----- */
