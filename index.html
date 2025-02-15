@@ -186,12 +186,12 @@
       openEnvelope.classList.add("animate");
     });
 
-    // When the open envelope's animation finishes, wait for a click.
+    // When the open envelope's animation finishes, wait for a click or tap.
     openEnvelope.addEventListener("animationend", function(e) {
       if (e.animationName === "openIn") {
-        // Now the open envelope waits for a click.
         openEnvelope.style.cursor = "pointer";
         openEnvelope.addEventListener("click", transitionToMain);
+        openEnvelope.addEventListener("touchend", transitionToMain);
       }
     });
 
@@ -200,10 +200,11 @@
       closedEnvelope.style.display = "none";
       openEnvelope.style.display = "none";
       mainContainer.style.display = "flex";
-      mainContainer.classList.add("scale-up"); // animate scale from 0 to 1
-      mainActive = true; // Now scrolling is enabled.
-      // Remove the click listener.
+      mainContainer.classList.add("scale-up"); // Animate scale from 0 to 1.
+      mainActive = true; // Enable scrolling.
+      // Remove the event listeners to prevent multiple triggers.
       openEnvelope.removeEventListener("click", transitionToMain);
+      openEnvelope.removeEventListener("touchend", transitionToMain);
     }
 
     /* ----- Scroll-to-Type Functionality ----- */
